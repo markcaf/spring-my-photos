@@ -11,31 +11,28 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.myphotos.demo.model.Photo;
+import com.myphotos.demo.service.PhotoService;
 
 @RestController
 public class PhotoController {
 	
-	private List<Photo> list;
+	private PhotoService photoService;
 	
 	public PhotoController() {
 		
-		list = new ArrayList<>();
-		
-		list.add(new Photo(1, "./img/01.png"));
-		list.add(new Photo(2, "./img/02.png"));
-		list.add(new Photo(3, "./img/03.png"));
+		photoService = new PhotoService();
 	}
 	
 	@RequestMapping("/api/photos")
 	public Iterable<Photo> getAll(){
 		
-		return list;
+		return photoService.getAll();
 	}
 	
 	@RequestMapping("/api/photos/{id}")
 	public Photo getById(@PathVariable int id) {
 		
-		Optional<Photo> photo = list.stream().filter(item->item.getId() == id).findFirst();
+		Optional<Photo> photo = photoService.getById(id);
 		
 		if (photo.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "item not found");
